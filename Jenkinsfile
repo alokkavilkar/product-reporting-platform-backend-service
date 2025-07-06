@@ -20,6 +20,7 @@ node('node1') {
                 export TEST_DB_PASSWORD=${TEST_DB_PASSWORD}
 
                 docker run -v ${env.WORKSPACE}/coverage:/app/htmlcov --rm \
+                -v \$(pwd)/test-reports \
                 -e DEV=True \
                 -e TEST_DB_NAME=defaultdb \
                 -e TEST_DB_USER=\$TEST_DB_USER \
@@ -30,8 +31,14 @@ node('node1') {
                 -e SECRET_KEY=\$DJANGO_SECRET_KEY \
                 -e DJANGO_SETTINGS_MODULE=core.settings_test \
                 -e ROLE_NAMESPACE=\$ROLE_NAMESPACE \
-                ${IMAGE_NAME}-test pytest
+                ${IMAGE_NAME}-test sh -c "
+                pytest --html=test-reports/html/report.html \
+                    --junitxml=test-reports/junit/results.xml \
+                    --cov=. --cov-report=html:test-reports/htmlcov
+                "
             """
+
+            junit 'test-reports/junit/results.xml'
         }
     }
 
