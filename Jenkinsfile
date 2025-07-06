@@ -45,6 +45,7 @@ node('node1'){
             string(credentialsId: 'AUTH0-ROLE-NAMESPACE', variable: 'ROLE_NAMESPACE')
         ])
         {
+            echo "Bandit security checking"
             sh """
                 export TEST_DB_USER=${TEST_DB_USER}
                 export TEST_DB_PASSWORD=${TEST_DB_PASSWORD}
@@ -60,7 +61,33 @@ node('node1'){
                 -e SECRET_KEY=\$DJANGO_SECRET_KEY \
                 -e DJANGO_SETTINGS_MODULE=core.settings_test \
                 -e ROLE_NAMESPACE=\$ROLE_NAMESPACE \
-                ${IMAGE_NAME}-test bandit -r . -f xml -o security-reports/bandit.xml
+                ${IMAGE_NAME}-test sh -c "
+                mkdir -p security-reports/
+                bandit -r . -f xml -o security-reports/bandit.xml
+                "
+            """
+
+            echo "Dependecies safety checking"
+
+             sh """
+                export TEST_DB_USER=${TEST_DB_USER}
+                export TEST_DB_PASSWORD=${TEST_DB_PASSWORD}
+
+                docker run -v ${env.WORKSPACE}/coverage:/app/htmlcov --rm \
+                -e DEV=True \
+                -e TEST_DB_NAME=defaultdb \
+                -e TEST_DB_USER=\$TEST_DB_USER \
+                -e TEST_DB_PASSWORD=\$TEST_DB_PASSWORD \
+                -e TEST_DB_HOST=pg-f205f26-alokkavilkar-dc92.c.aivencloud.com \
+                -e TEST_DB_PORT=16997 \
+                -e TEST_DB_SSLMODE=require \
+                -e SECRET_KEY=\$DJANGO_SECRET_KEY \
+                -e DJANGO_SETTINGS_MODULE=core.settings_test \
+                -e ROLE_NAMESPACE=\$ROLE_NAMESPACE \
+                ${IMAGE_NAME}-test sh -c "
+                pip freeze > requirements.freeze.txt
+                safety check --file=requirements.freeze.txt --full-report --output=json > security-reports/safety.json
+                "
             """
         }
     }

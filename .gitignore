@@ -4,3 +4,4 @@
 htmlcov
 venv
 __pycache__
+security-reports/
