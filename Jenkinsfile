@@ -22,7 +22,7 @@ node('node1'){
                 -e TEST_DB_HOST=pg-f205f26-alokkavilkar-dc92.c.aivencloud.com \
                 -e TEST_DB_PORT=16997 \
                 -e TEST_DB_SSLMODE=require \
-                -e DJANGO_SETTINGS_MODULE=inspection.settings.test \
+                -e DJANGO_SETTINGS_MODULE=core.settings_test \
                 ${IMAGE_NAME}-test pytest
             """
         }
