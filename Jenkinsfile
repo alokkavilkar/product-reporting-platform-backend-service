@@ -87,7 +87,7 @@ node('node1'){
                 ${IMAGE_NAME}-test sh -c "
                 mkdir -p security-reports/
                 pip freeze > requirements.freeze.txt
-                safety check --file=requirements.freeze.txt --full-report --output=json > security-reports/safety.json
+                safety check --file=requirements.freeze.txt --full-report > security-reports/safety.json
                 "
             """
         }
