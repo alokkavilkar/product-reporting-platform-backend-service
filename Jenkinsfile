@@ -14,8 +14,7 @@ node('node1'){
             sh """
                 export TEST_DB_USER=${TEST_DB_USER}
                 export TEST_DB_PASSWORD=${TEST_DB_PASSWORD}
-                echo $TEST_DB_USER
-                
+
                 docker run -v ${env.WORKSPACE}/coverage:/app/htmlcov --rm \
                 -e TEST_DB_NAME=defaultdb \
                 -e TEST_DB_USER=\$TEST_DB_USER \
