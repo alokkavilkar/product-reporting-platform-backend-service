@@ -1,0 +1,35 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+ENV/
+
+# Test coverage reports and pytest cache
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Django secret settings
+.env
+
+# Git and version control
+.git/
+.gitignore
+
+# Editor / IDE files
+*.swp
+*.swo
+*.bak
+*.tmp
+*.DS_Store
+.vscode/
+.idea/
+
+# Docker artifacts
+Dockerfile.test
+
+# System files
+Thumbs.db
