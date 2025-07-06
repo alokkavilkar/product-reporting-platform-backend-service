@@ -10,9 +10,12 @@ node('node1'){
     }
 
     stage('Run Django Tests') {
-        withCredentials([usernamePassword(credentialsId: 'aiven-db-credentials', usernameVariable: 'TEST_DB_USER', passwordVariable: 'TEST_DB_PASSWORD')],
-        string(credentialsId: 'django-pdi-app-secret', variable: 'DJANGO_SECRET_KEY')
-        ) {
+
+        withCredentials([
+            usernamePassword(credentialsId: 'aiven-db-credentials', usernameVariable: 'TEST_DB_USER', passwordVariable: 'TEST_DB_PASSWORD'),
+            string(credentialsId: 'django-pdi-app-secret', variable: 'DJANGO_SECRET_KEY')
+        ])
+        {
             sh """
                 export TEST_DB_USER=${TEST_DB_USER}
                 export TEST_DB_PASSWORD=${TEST_DB_PASSWORD}
