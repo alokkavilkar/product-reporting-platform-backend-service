@@ -11,7 +11,7 @@ node('node1'){
 
     stage('Run Django Tests') {
         withCredentials([usernamePassword(credentialsId: 'aiven-db-credentials', usernameVariable: 'TEST_DB_USER', passwordVariable: 'TEST_DB_PASSWORD')]) {
-            sh '''
+            sh """
                 docker run --rm \
                   -e TEST_DB_NAME=defaultdb \
                   -e TEST_DB_USER=${TEST_DB_USER} \
@@ -21,7 +21,7 @@ node('node1'){
                   -e TEST_DB_SSLMODE=require \
                   -e DJANGO_SETTINGS_MODULE=inspection.settings.test \
                   ${IMAGE_NAME}-test
-            '''
+            """
         }
     }
 }
