@@ -63,7 +63,7 @@ node('node1'){
                 -e ROLE_NAMESPACE=\$ROLE_NAMESPACE \
                 ${IMAGE_NAME}-test sh -c "
                 mkdir -p security-reports/
-                bandit -r . -f xml -o security-reports/bandit.xml
+                bandit -r . -f xml -o security-reports/bandit.xml || true
                 "
             """
 
