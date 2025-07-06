@@ -85,6 +85,7 @@ node('node1'){
                 -e DJANGO_SETTINGS_MODULE=core.settings_test \
                 -e ROLE_NAMESPACE=\$ROLE_NAMESPACE \
                 ${IMAGE_NAME}-test sh -c "
+                mkdir -p security-reports/
                 pip freeze > requirements.freeze.txt
                 safety check --file=requirements.freeze.txt --full-report --output=json > security-reports/safety.json
                 "
