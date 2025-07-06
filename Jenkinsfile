@@ -10,7 +10,9 @@ node('node1'){
     }
 
     stage('Run Django Tests') {
-        withCredentials([usernamePassword(credentialsId: 'aiven-db-credentials', usernameVariable: 'TEST_DB_USER', passwordVariable: 'TEST_DB_PASSWORD')]) {
+        withCredentials([usernamePassword(credentialsId: 'aiven-db-credentials', usernameVariable: 'TEST_DB_USER', passwordVariable: 'TEST_DB_PASSWORD')],
+        string(credentialsId: 'django-pdi-app-secret', variable: 'DJANGO_SECRET_KEY')
+        ) {
             sh """
                 export TEST_DB_USER=${TEST_DB_USER}
                 export TEST_DB_PASSWORD=${TEST_DB_PASSWORD}
@@ -22,6 +24,7 @@ node('node1'){
                 -e TEST_DB_HOST=pg-f205f26-alokkavilkar-dc92.c.aivencloud.com \
                 -e TEST_DB_PORT=16997 \
                 -e TEST_DB_SSLMODE=require \
+                -e SECRET_KEY=\$DJANGO_SECRET_KEY \
                 -e DJANGO_SETTINGS_MODULE=core.settings_test \
                 ${IMAGE_NAME}-test pytest
             """
