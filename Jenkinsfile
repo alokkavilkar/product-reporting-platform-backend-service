@@ -13,7 +13,8 @@ node('node1'){
 
         withCredentials([
             usernamePassword(credentialsId: 'aiven-db-credentials', usernameVariable: 'TEST_DB_USER', passwordVariable: 'TEST_DB_PASSWORD'),
-            string(credentialsId: 'django-pdi-app-secret', variable: 'DJANGO_SECRET_KEY')
+            string(credentialsId: 'django-pdi-app-secret', variable: 'DJANGO_SECRET_KEY'),
+            string(credentialsId: 'AUTH0-ROLE-NAMESPACE', variable: 'ROLE_NAMESPACE')
         ])
         {
             sh """
@@ -30,6 +31,7 @@ node('node1'){
                 -e TEST_DB_SSLMODE=require \
                 -e SECRET_KEY=\$DJANGO_SECRET_KEY \
                 -e DJANGO_SETTINGS_MODULE=core.settings_test \
+                -e ROLE_NAMESPACE=\$ROLE_NAMESPACE \
                 ${IMAGE_NAME}-test pytest
             """
         }
