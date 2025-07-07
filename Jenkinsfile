@@ -1,4 +1,5 @@
 def IMAGE_NAME = "alokkavilkar227/report-platform-backend-service:1.0"
+def SONAR_SCAN = false
 
 node('node1') {
     stage('checkout') {
@@ -108,9 +109,42 @@ node('node1') {
     }
 
     stage('SonarQube Analysis') {
-        withSonarQubeEnv('mysonar') {
-            sh 'sonar-scanner'
+        if (SONAR_SCAN == true) {
+            withSonarQubeEnv('mysonar') {
+                sh 'sonar-scanner'
+            }
         }
     }
 
+    stage('Wait for Quality Gate') {
+        if (SONAR_SCAN == true) {
+            timeout(time: 1, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+            }
+        }
+    }
+
+    stage('DAST scan - Project setup') {
+        sh '''
+            docker run -d --name django-test -p 8000:8000 \
+              -e DEV=True \
+              -e DJANGO_SETTINGS_MODULE=core.settings_test \
+              alokkavilkar227/report-platform-backend-service:1.0 \
+              python manage.py runserver 0.0.0.0:8000
+        '''
+    }
+
+    stage('DAST Scan - ZAP') {
+        sh '''
+            docker run --rm -v $(pwd)/zap-reports:/zap/wrk/:rw \
+              --network host \
+              owasp/zap2docker-stable zap-baseline.py \
+              -t http://localhost:8000 \
+              -r zap_report.html -x zap_report.xml || true
+        '''
+    }
+
+    stage('DAST scan - Clean up'){
+        sh 'docker stop django-test && docker rm django-test'
+    }
 }
