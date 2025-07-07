@@ -125,13 +125,13 @@ node('node1') {
     }
 
     stage('DAST scan - Project setup') {
-        sh '''
+        sh """
             docker run -d --name django-test -p 8000:8000 \
               -e DEV=True \
               -e DJANGO_SETTINGS_MODULE=core.settings_test \
-              alokkavilkar227/report-platform-backend-service:1.0 \
+              ${IMAGE_NAME}-test \
               python manage.py runserver 0.0.0.0:8000
-        '''
+        """
     }
 
     stage('DAST Scan - ZAP') {
