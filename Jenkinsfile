@@ -144,7 +144,7 @@ node('node1') {
             sh '''
                 docker run --rm -v $(pwd)/zap-reports:/zap/wrk/:rw \
                 --network host \
-                ghcr.io/zaproxy/zap-baseline:latest \
+                owasp/zap2docker-stable \
                 -t http://localhost:8000 \
                 -r zap_report.html -x zap_report.xml || true
             '''
