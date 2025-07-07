@@ -34,7 +34,8 @@ node('node1') {
                 ${IMAGE_NAME}-test sh -c "
                 pytest --html=test-reports/html/report.html \
                     --junitxml=test-reports/junit/results.xml \
-                    --cov=. --cov-report=html:test-reports/htmlcov
+                    --cov=. --cov-report=html:test-reports/htmlcov \
+                    --cov-report=xml:test-reports/coverage.xml
                 "
             """
 
@@ -105,4 +106,13 @@ node('node1') {
             }
         )
     }
+
+    stage('SonarQube Analysis') {
+        steps {
+            withSonarQubeEnv('SonarQubeServer') {
+                sh 'sonar-scanner'
+            }
+        }
+    }
+
 }
