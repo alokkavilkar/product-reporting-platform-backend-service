@@ -108,10 +108,8 @@ node('node1') {
     }
 
     stage('SonarQube Analysis') {
-        steps {
-            withSonarQubeEnv('SonarQubeServer') {
-                sh 'sonar-scanner'
-            }
+        withSonarQubeEnv('SonarQubeServer') {
+            sh 'sonar-scanner'
         }
     }
 
