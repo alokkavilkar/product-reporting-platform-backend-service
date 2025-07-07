@@ -135,13 +135,21 @@ node('node1') {
     }
 
     stage('DAST Scan - ZAP') {
-        sh '''
-            docker run --rm -v $(pwd)/zap-reports:/zap/wrk/:rw \
-              --network host \
-              ghcr.io/zaproxy/zap-baseline:latest \
-              -t http://localhost:8000 \
-              -r zap_report.html -x zap_report.xml || true
-        '''
+        withCredentials([usernamePassword(
+            credentialsId: 'dockerhub-creds',
+            usernameVariable: 'DOCKERHUB_USER',
+            passwordVariable: 'DOCKERHUB_PASS'
+        )]) {
+            sh 'echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin'
+            sh '''
+                docker run --rm -v $(pwd)/zap-reports:/zap/wrk/:rw \
+                --network host \
+                ghcr.io/zaproxy/zap-baseline:latest \
+                -t http://localhost:8000 \
+                -r zap_report.html -x zap_report.xml || true
+            '''
+        }
+
     }
 
     stage('DAST scan - Clean up'){
