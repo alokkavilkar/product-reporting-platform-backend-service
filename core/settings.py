@@ -6,7 +6,9 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-DEV = os.environ.get("DEV", "False") == "True"
+# DEV = os.environ.get("DEV", "False") == "True"
+DEV = os.environ.get("DEV", "").lower() in ("true", "1", "yes")
+
 
 # settings.py
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
