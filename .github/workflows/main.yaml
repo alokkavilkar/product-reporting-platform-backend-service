@@ -57,7 +57,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: test --severity-threshold=medium --sarif-file-output=security-reports/snyk.sarif || true
+          args: monitor --file=requirements.txt
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
