@@ -18,7 +18,8 @@ RUN pip install --prefix=/install -r requirements.txt
 
 COPY . .
 
-RUN PYTHONPATH=/app python manage.py collectstatic --noinput
+ENV PYTHONPATH=/app
+RUN python manage.py collectstatic --noinput
 
 FROM python:3.11-slim
 
