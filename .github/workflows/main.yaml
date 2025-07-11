@@ -11,6 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
 
+    env:
+      DEV: true
+      DJANGO_SETTINGS_MODULE: core.settings_test
+      TEST_DB_NAME: ${{ secrets.TEST_DB_NAME }}
+      TEST_DB_HOST: ${{ secrets.TEST_DB_HOST }}
+      TEST_DB_PORT: ${{ secrets.TEST_DB_PORT }}
+      TEST_DB_SSLMODE: ${{ secrets.TEST_DB_SSLMODE }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      TEST_DB_USER: ${{ secrets.TEST_DB_USER }}
+      TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+      ROLE_NAMESPACE: ${{ secrets.ROLE_NAMESPACE }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
