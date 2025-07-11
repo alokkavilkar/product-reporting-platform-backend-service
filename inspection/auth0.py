@@ -5,7 +5,6 @@ import os
 from django.http import JsonResponse
 from django.conf import settings
 
-print("settings.DEV =", settings.DEV) 
 
 def get_token_auth_header(request):
 

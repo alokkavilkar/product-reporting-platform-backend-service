@@ -27,11 +27,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Debug ENV
-        run: |
-          echo "DEV is $DEV"
-          python -c 'import os; print("Python sees DEV =", os.environ.get("DEV"))'
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -62,7 +57,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: test --all-projects --severity-threshold=medium --sarif-file-output=security-reports/snyk.sarif || true
+          args: test --severity-threshold=medium --sarif-file-output=security-reports/snyk.sarif || true
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
