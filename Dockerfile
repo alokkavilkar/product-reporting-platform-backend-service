@@ -2,7 +2,8 @@ FROM python:3.11-slim AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/install/bin:$PATH"
+    PATH="/install/bin:$PATH" \
+    PYTHONPATH="/install/lib/python3.11/site-packages:/app"
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -13,13 +14,14 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 COPY requirements.txt .
+
 RUN pip install --upgrade pip
 RUN pip install --prefix=/install -r requirements.txt
 
 COPY . .
 
-ENV PYTHONPATH=/app
 RUN python manage.py collectstatic --noinput
+
 
 FROM python:3.11-slim
 
@@ -27,14 +29,14 @@ RUN addgroup --system django && adduser --system --ingroup django django
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/install/bin:$PATH"
+    PATH="/install/bin:$PATH" \
+    PYTHONPATH="/install/lib/python3.11/site-packages:/app"
 
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y libpq-dev && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /install /install
-
 COPY --from=builder /app /app
 
 RUN chown -R django:django /app
