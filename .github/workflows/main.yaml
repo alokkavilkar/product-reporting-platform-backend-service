@@ -52,12 +52,13 @@ jobs:
           mkdir -p security-reports
           bandit -r . -f xml -o security-reports/bandit.xml || true
 
-      - name: Run dependency scan with Snyk
+      - name: Run Snyk monitor on Django backend
         uses: snyk/actions/python@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: monitor --file=requirements.txt
+          args: monitor --file=requirements.txt --project-name=prod-inspection-app
+
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
