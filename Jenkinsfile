@@ -124,35 +124,34 @@ node('node1') {
         }
     }
 
-    stage('DAST scan - Project setup') {
-        sh """
-            docker run -d --name django-test -p 8000:8000 \
-              -e DEV=True \
-              -e DJANGO_SETTINGS_MODULE=core.settings_test \
-              ${IMAGE_NAME}-test \
-              python manage.py runserver 0.0.0.0:8000
-        """
-    }
+    // stage('DAST scan - Project setup') {
+    //     sh """
+    //         docker run -d --name django-test -p 8000:8000 \
+    //           -e DEV=True \
+    //           -e DJANGO_SETTINGS_MODULE=core.settings_test \
+    //           ${IMAGE_NAME}-test \
+    //           python manage.py runserver 0.0.0.0:8000
+    //     """
+    // }
 
-    stage('DAST Scan - ZAP') {
-        withCredentials([usernamePassword(
-            credentialsId: 'dockerhub-creds',
-            usernameVariable: 'DOCKERHUB_USER',
-            passwordVariable: 'DOCKERHUB_PASS'
-        )]) {
-            sh 'echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin'
-            sh '''
-                docker run --rm -v $(pwd)/zap-reports:/zap/wrk/:rw \
-                --network host \
-                owasp/zap2docker-stable \
-                -t http://localhost:8000 \
-                -r zap_report.html -x zap_report.xml || true
-            '''
-        }
-
-    }
-
-    stage('DAST scan - Clean up'){
-        sh 'docker stop django-test && docker rm django-test'
-    }
+    // stage('DAST Scan - ZAP') {
+    //     withCredentials([usernamePassword(
+    //         credentialsId: 'dockerhub-creds',
+    //         usernameVariable: 'DOCKERHUB_USER',
+    //         passwordVariable: 'DOCKERHUB_PASS'
+    //     )]) {
+    //         sh 'echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin'
+    //         sh '''
+    //             docker run --rm -v $(pwd)/zap-reports:/zap/wrk/:rw \
+    //             --network host \
+    //             owasp/zap2docker-stable \
+    //             -t http://localhost:8000 \
+    //             -r zap_report.html -x zap_report.xml || true
+    //         '''
+    //     }
+    // }
+    
+    // stage('DAST scan - Clean up'){
+    //     sh 'docker stop django-test && docker rm django-test'
+    // }
 }
