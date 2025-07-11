@@ -1,0 +1,70 @@
+name: Django Application Test and Artifact Image build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-build:
+    name: Run Tests, Security Checks and SonarCloud Analysis
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests with coverage
+        run: |
+          mkdir -p test-reports/junit test-reports/html test-reports/htmlcov
+          pytest \
+            --html=test-reports/html/report.html \
+            --junitxml=test-reports/junit/results.xml \
+            --cov=. \
+            --cov-report=html:test-reports/htmlcov \
+            --cov-report=xml:test-reports/coverage.xml
+
+      - name: Run security tests (Bandit)
+        run: |
+          mkdir -p security-reports
+          bandit -r . -f xml -o security-reports/bandit.xml || true
+
+      - name: Run dependency scan with Snyk
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: test --all-projects --severity-threshold=medium --sarif-file-output=security-reports/snyk.sarif || true
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            test-reports/html
+            test-reports/htmlcov
+            test-reports/junit
+            test-reports/coverage.xml
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            security-reports/
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
