@@ -52,6 +52,15 @@ jobs:
           mkdir -p security-reports
           bandit -r . -f xml -o security-reports/bandit.xml || true
 
+      - name: Debug project files
+        run: |
+          echo "Listing top-level files..."
+          ls -l
+          echo "Checking for package.json or node_modules..."
+          find . -name "package.json" || echo "No package.json"
+          find . -name "node_modules" || echo "No node_modules"
+
+
       - name: Run Snyk monitor on Django backend
         uses: snyk/actions/python@master
         env:
