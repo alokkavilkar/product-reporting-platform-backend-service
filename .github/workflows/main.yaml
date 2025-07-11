@@ -27,6 +27,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Debug ENV
+        run: |
+          echo "DEV is $DEV"
+          python -c 'import os; print("Python sees DEV =", os.environ.get("DEV"))'
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
