@@ -52,22 +52,25 @@ jobs:
           mkdir -p security-reports
           bandit -r . -f xml -o security-reports/bandit.xml || true
 
-      - name: Debug project files
-        run: |
-          echo "Listing top-level files..."
-          ls -l
-          echo "Checking for package.json or node_modules..."
-          find . -name "package.json" || echo "No package.json"
-          find . -name "node_modules" || echo "No node_modules"
-
-
-      - name: Run Snyk monitor on Django backend
+      - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/python@master
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: monitor --file=requirements.txt --project-name=prod-inspection-app
+          args: --sarif-file-output=snyk.sarif
 
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: snyk.sarif
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
