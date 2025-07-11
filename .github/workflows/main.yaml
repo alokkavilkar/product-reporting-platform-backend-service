@@ -12,7 +12,7 @@ jobs:
     environment: production
 
     env:
-      DEV: true
+      DEV: True
       DJANGO_SETTINGS_MODULE: core.settings_test
       TEST_DB_NAME: ${{ secrets.TEST_DB_NAME }}
       TEST_DB_HOST: ${{ secrets.TEST_DB_HOST }}
