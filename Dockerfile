@@ -1,7 +1,8 @@
 FROM python:3.11-slim AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    PATH="/install/bin:$PATH"
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -17,7 +18,7 @@ RUN pip install --prefix=/install -r requirements.txt
 
 COPY . .
 
-RUN PYTHONPATH=/app /install/bin/python manage.py collectstatic --noinput
+RUN PYTHONPATH=/app python manage.py collectstatic --noinput
 
 FROM python:3.11-slim
 
