@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-config
+  labels:
+    app: django-api
+data:
+  DJANGO_SETTINGS_MODULE: core.settings
+  DJANGO_ALLOWED_HOSTS: "*"
+  DJANGO_DEBUG: "False"
+  TEST_DB_SSLMODE: "require"
+  # Environment
+  DEV: False
+  DEBUG: False
