@@ -10,5 +10,5 @@ data:
   DJANGO_DEBUG: "False"
   TEST_DB_SSLMODE: "require"
   # Environment
-  DEV: False
-  DEBUG: False
+  DEV: "False"
+  DEBUG: "False"
