@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: django-api
-          image: 058264318784.dkr.ecr.us-east-1.amazonaws.com/alokkavilkar/product-report-platform-backend-service:e34f4069af4c08078997215e5adac4dc33b6927e
+          image: 058264318784.dkr.ecr.us-east-1.amazonaws.com/alokkavilkar/product-report-platform-backend-service:dab65fd7d5c3f3745d68ecf476ceab81cc0c2cdf
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
