@@ -1,0 +1,3 @@
+kustomize:
+  images:
+  - 058264318784.dkr.ecr.us-east-1.amazonaws.com/alokkavilkar/product-report-platform-backend-service:145ca474e1566421445dda9a16e1b4fbe7fa42be
