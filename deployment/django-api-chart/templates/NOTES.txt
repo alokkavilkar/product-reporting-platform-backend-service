@@ -1,0 +1,35 @@
+1. Get the application URL by running these commands:
+
+{{- if .Values.ingress.enabled }}
+
+{{- range .Values.ingress.hosts }}
+  {{- range .paths }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ .host }}{{ .path }}
+  {{- end }}
+{{- end }}
+
+{{- else if eq .Values.service.type "NodePort" }}
+
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "django-api-chart.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo "Access your application at: http://$NODE_IP:$NODE_PORT"
+
+{{- else if eq .Values.service.type "LoadBalancer" }}
+
+  NOTE: It may take a few minutes for the external IP to be available.
+  Watch the status using:
+    kubectl get svc --namespace {{ .Release.Namespace }} {{ include "django-api-chart.fullname" . }} -w
+
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "django-api-chart.fullname" . }} --template "{{`{{ (index .status.loadBalancer.ingress 0).ip }}`}}")
+  echo "Access your application at: http://$SERVICE_IP:{{ .Values.service.port }}"
+
+{{- else if eq .Values.service.type "ClusterIP" }}
+
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "django-api-chart.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace {{ .Release.Namespace }} $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+  echo "To access your application locally via port-forward:"
+  echo "  Visit http://127.0.0.1:8080"
+  echo "  Then run:"
+  echo "  kubectl port-forward --namespace {{ .Release.Namespace }} $POD_NAME 8080:$CONTAINER_PORT"
+
+{{- end }}

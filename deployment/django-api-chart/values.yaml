@@ -1,0 +1,40 @@
+replicaCount: 2
+
+image:
+  repository: ""
+  tag: ""
+  pullPolicy: Always
+
+imagePullSecrets:
+  - name: my-registry-secret
+
+env:
+  configMapRef: django-config
+  secretRef: django-secrets
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+autoscaling:
+  enabled: false
+
+service:
+  type: ClusterIP
+  port: 8000
+
+metadata:
+  environment: production
+
+config:
+  DJANGO_SETTINGS_MODULE: core.settings
+  DJANGO_ALLOWED_HOSTS: "*"
+  DJANGO_DEBUG: "False"
+  TEST_DB_SSLMODE: "require"
+  DEV: "False"
+  DEBUG: "False"
+
